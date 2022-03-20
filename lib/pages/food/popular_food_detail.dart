@@ -2,7 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/controllers/cart_controller.dart';
 import 'package:food_delivery/controllers/popular_product_controller.dart';
+import 'package:food_delivery/pages/cart/cart_page.dart';
 import 'package:food_delivery/pages/home/main_food_page.dart';
+import 'package:food_delivery/routes/route_helper.dart';
 import 'package:food_delivery/utils/app_constants.dart';
 import 'package:food_delivery/utils/colors.dart';
 import 'package:food_delivery/utils/dimension.dart';
@@ -26,7 +28,7 @@ class PopularFoodDetail extends StatelessWidget {
   Widget build(BuildContext context) {
 
     var product = Get.find<PopularProductController>().popularProductList[pageId];
-    Get.find<PopularProductController>().initProduct(Get.find<CartController>());
+    Get.find<PopularProductController>().initProduct(product,Get.find<CartController>());
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -63,7 +65,34 @@ class PopularFoodDetail extends StatelessWidget {
                   },
                   child: AppIcon(icon: Icons.arrow_back_ios)
                 ),
-                AppIcon(icon: Icons.shopping_cart_outlined),
+                GetBuilder<PopularProductController>(builder: (controller){
+                  return GestureDetector(
+                    onTap: (){
+                      if(controller.totalItems>=1){
+                        Get.toNamed(RouteHelper.getCartPage());
+                      }
+                    },
+                    child: Stack(
+                      children: [
+                        AppIcon(icon: Icons.shopping_cart_outlined),
+                        controller.totalItems>=1?
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: AppIcon(icon: Icons.circle,size:20,iconColor: Colors.transparent,backgroundColor: AppColors.mainColor,))
+                        :Container(),
+                        Get.find<PopularProductController>().totalItems>=1?
+                        Positioned(
+                          right: 4,
+                          top: 4,
+                          child:BigText(text:  Get.find<PopularProductController>().totalItems.toString(),
+                            size: 12, color: Colors.white
+                          ))
+                        :Container()
+                      ],
+                    ),
+                  );
+                }),
               ],
             ),
           ),
@@ -147,7 +176,7 @@ class PopularFoodDetail extends StatelessWidget {
                       SizedBox(
                         width: Dimensions.width10 / 2,
                       ),
-                      BigText(text: popularProduct.quantity.toString()),
+                      BigText(text: popularProduct.inCartItems.toString()),
                       SizedBox(
                         width: Dimensions.width10 / 2,
                       ),
