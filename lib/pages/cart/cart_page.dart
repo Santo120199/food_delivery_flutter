@@ -251,6 +251,8 @@ class CartPage extends StatelessWidget {
                   child: GestureDetector(
                     onTap: () {
                       //popularProduct.addItem(product);
+                      print("tappde");
+                      cartController.addToHistory();
                     },
                     child: BigText(
                       text: "Check out",
